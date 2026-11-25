@@ -1843,16 +1843,11 @@ customImageQualityDialog(SessionID sessionId, String id, FFI ffi) async {
   bool qualitySet = false;
   bool fpsSet = false;
 
-  bool? direct;
-  try {
-    direct =
-        ConnectionTypeState.find(id).direct.value == ConnectionType.strDirect;
-  } catch (_) {}
-  bool hideFps = (await bind.mainIsUsingPublicServer() && direct != true) ||
-      versionCmp(ffi.ffiModel.pi.version, '1.2.0') < 0;
-  bool hideMoreQuality =
-      (await bind.mainIsUsingPublicServer() && direct != true) ||
-          versionCmp(ffi.ffiModel.pi.version, '1.2.2') < 0;
+  // Pad build: the public-relay restriction on the custom quality range and on
+  // the 60fps option is lifted, so the ultra preset is always reachable. The
+  // remote peer must still be new enough to understand those fields.
+  bool hideFps = versionCmp(ffi.ffiModel.pi.version, '1.2.0') < 0;
+  bool hideMoreQuality = versionCmp(ffi.ffiModel.pi.version, '1.2.2') < 0;
 
   setCustomValues({double? quality, double? fps}) async {
     debugPrint("setCustomValues quality:$quality, fps:$fps");
